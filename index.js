@@ -1,5 +1,7 @@
 // Add Express
 const express = require("express");
+const request = require("request");
+require("dotenv").config();
 
 // Initialize Express
 const app = express();
@@ -14,6 +16,26 @@ app.get("/me", (req, res) => {
     name: "Sujeet Gund",
     currentStatus: "Student",
   });
+});
+
+app.get("/quotes/:category?", (req, res) => {
+  let category = req.params.category || "amazing";
+  request.get(
+    {
+      url: "https://api.api-ninjas.com/v1/quotes?category=" + category,
+      headers: {
+        "X-Api-Key": process.env.API_KEY,
+      },
+    },
+    (err, data) => {
+      if (err) console.log("Error", err);
+      return res.json({
+        status: data.statusCode,
+        category: category,
+        body: JSON.parse(data.body),
+      });
+    }
+  );
 });
 
 // Initialize server
